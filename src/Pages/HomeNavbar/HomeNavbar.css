@@ -1,0 +1,33 @@
+.navbar{
+    position: fixed;
+    top: 0px; 
+    display: flex;
+    flex-direction: column;
+
+    /* max-width: 1200px; */
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 100%;
+    z-index: 4;
+    height: 50px;
+
+}
+
+.nav-section1{
+    display: flex;
+    background-color: white;
+    padding: 10px;
+    height: 40px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.nav-icon{
+    width: fit-content;
+    display: flex;
+    gap: 10px;
+    font-size: 30px;
+    color: rgb(103, 103, 103);
+}

@@ -5,10 +5,13 @@ import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined
 import ShowImage from '../../Components/ShowImage/ShowImage';
 import HomeNavbar from '../HomeNavbar/HomeNavbar'
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, forwardRef } from 'react';
 
 import GrayBackground from '../../Components/GrayBackground/GrayBackground';
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import { Link } from 'react-router-dom';
+
 let data = [
   {
     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
@@ -49,18 +52,37 @@ let data = [
 ]
 const AddMore = (props) => {
   const [isShow, setIsShow] = useState(false)
+  const plusSignButton = useRef(null)
+  const addProductElement = useRef(null)
 
   const toggleShow = () => {
     props.closeOtherElement()
+    toggleItemShownAnimation()
     setIsShow(!isShow)
   }
-  useEffect(()=>{
-    if(isShow) goIn()
-    else goOut()
-  },[isShow])
 
+  const toggleItemShownAnimation = () => {
+    if(!isShow) goIn()
+    else goOut()
+  }
+
+  //animation
   function goIn(){
-    console.log("ran")
+    // plus sign 
+    if(plusSignButton.current.classList.contains("rotate-plus-sign-back")){
+      plusSignButton.current.classList.remove("rotate-plus-sign-back")
+    }
+    
+    plusSignButton.current.classList.add("rotate-plus-sign")
+
+    //thêm hàng hoá
+    if(addProductElement.current.classList.contains("go-out")){
+      addProductElement.current.classList.remove("go-out")
+    }
+    addProductElement.current.classList.add("go-in")
+
+    // addProductElement.current.classList.add("go-in")
+    //thêm hàng hoá
     document.documentElement.style.setProperty('--translate-X-add-product', "0px");
     setTimeout(()=>{
       document.documentElement.style.setProperty('--translate-X-add-product', "-300px");
@@ -69,7 +91,16 @@ const AddMore = (props) => {
       },10)
     },10)
   }
-  function goOut(){
+  //animation
+  function goOut(){    
+    //plus sign 
+    plusSignButton.current.classList.remove("rotate-plus-sign")
+    plusSignButton.current.classList.add("rotate-plus-sign-back")
+
+    addProductElement.current.classList.remove("go-in")
+    addProductElement.current.classList.add("go-out")
+
+    //thêm hàng hoá
     document.documentElement.style.setProperty('--translate-X-add-product', "-250px");
     document.documentElement.style.setProperty('--opacity-value-add-product', "1");
     setTimeout(()=>{
@@ -86,31 +117,29 @@ const AddMore = (props) => {
     )
   }
 
-  const Box = (props) => {
-    const notifiaiton_tracker_ref = useRef(null)
-    const inOrOut = props.isShow ? "ease-in-animation":"ease-out-animation"
-
+    const stylingClass = isShow? 'bg-white add-icon-shadow w-14 h-14 rounded-full shadow-md':'bg-[#3e87ad] add-icon-shadow w-14 h-14 rounded-full shadow-md'
+  
     return (
-    <div className={'relative flex flex-row items-center gap-[15px] mr-1 mb-2 right-[-250px] '+inOrOut}>
-      <div className='add-icon-shadow bg-white h-10 p-3 flex justify-center items-center rounded-lg'>Thêm hàng hoá</div>
-      <button className='circle-shadow w-12 h-12 rounded-full bg-[white] flex justify-center items-center'>
-        <AddNewProductIcon/>
-      </button>
-    </div>
-    )}
-
-  return (
     <div>
       {isShow && <GrayBackground/>}
       <div className='z-[1201] fixed bottom-[80px] right-5 flex flex-col items-end'>
-      {<section>
-        <Box isShow={isShow}/>
+
+      <section id="">
+        {/* <Box ref={addProductElement} isShow={isShow}/> */}
+        <div ref={addProductElement} className={'relative flex flex-row items-center gap-[15px] mr-1 mb-2 right-[-250px]'}>
+          <div className='add-icon-shadow bg-white h-10 p-3 flex justify-center items-center rounded-lg'>Thêm hàng hoá</div>
+          <button className='circle-shadow w-12 h-12 rounded-full bg-[white] flex justify-center items-center'>
+            <Link to="/add-new-product">
+              <AddNewProductIcon />
+            </Link>
+          </button>
+        </div>
       </section>
-      }
+      
    
       <button onClick={(state) => {toggleShow()}} 
-        className='add-icon-shadow w-14 h-14 rounded-full bg-[#3e87ad] shadow-md'>
-        <AddIcon className='text-white scale-[120%]'/>
+        className= {stylingClass}>
+          <AddIcon ref={plusSignButton} className="scale-[120%] text-white"/>
       </button>
     </div>
     </div>

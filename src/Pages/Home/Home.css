@@ -1,5 +1,5 @@
 :root {
-    --translate-X-add-product: -250px;
+    --translate-X-add-product:  0px;
     --opacity-value-add-product: 1;
 }
 
@@ -51,6 +51,7 @@
     box-shadow: 1px 6px 7px #999;
 }
 
+
 .ease-in-animation{
     transform: translateX(var(--translate-X-add-product));
     transition: transform 0.2s;
@@ -62,3 +63,79 @@
     transition: transform 1s, opacity 0.3s;
 }
 
+.go-in{
+    animation-name: go-in-animation;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes go-in-animation {
+    0% {
+        opacity: 0;
+        transform: translateX(0px);
+    }
+    40%{
+        opacity: 1;
+    }
+    /* 50% {
+        transform: translateX(-250px);
+    } */
+    50%{
+        transform: translateX(-260px);
+    }
+    75%{
+        transform: translateX(-247px);
+    }
+    100%{
+        transform: translateX(-250px);
+    }
+}
+
+.go-out{
+    animation-name: go-out-animation;
+    animation-duration: 0.8s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes go-out-animation {
+    0% {
+        opacity: 1;
+        transform: translateX(-250px);
+    }
+    40%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 0;
+        transform: translateX(0px);
+    }
+}
+
+
+
+.rotate-plus-sign-back{
+    color: white;
+    animation-name: rotate-backward;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+.rotate-plus-sign{
+    color: #3e87ad;
+    animation-name: rotate-forward;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+@keyframes rotate-backward {
+    from {
+        transform: rotate(-45deg) scale(120%);
+    }
+    to {
+
+        transform: rotate(0deg) scale(120%);
+    }
+}
+@keyframes rotate-forward {
+    from {transform: rotate(0deg) scale(120%);}
+    to {transform: rotate(-45deg) scale(120%);}
+}

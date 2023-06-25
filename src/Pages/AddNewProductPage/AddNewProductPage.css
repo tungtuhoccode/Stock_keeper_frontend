@@ -1,0 +1,39 @@
+.add-new-product-go-up{
+    animation-name: add-new-product-go-up;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes add-new-product-go-up {
+    0% {
+        transform: translateY(80vh);
+    }
+    /* 50% {
+        transform: translateX(-250px);
+    } */
+
+    100%{
+        transform: translateY(0vh)
+    }
+}
+
+.add-new-product-go-down{
+    animation-name: add-new-product-go-down;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes add-new-product-go-down {
+    0% {
+        transform: translateY(0vh);
+    }
+    /* 50% {
+        transform: translateX(-250px);
+    } */
+
+    100%{
+        transform: translateY(100vh)
+    }
+}

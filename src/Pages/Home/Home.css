@@ -65,7 +65,7 @@
 
 .go-in{
     animation-name: go-in-animation;
-    animation-duration: 0.4s;
+    animation-duration: 0.35s;
     animation-fill-mode: forwards;
 }
 

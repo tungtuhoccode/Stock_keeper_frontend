@@ -5,12 +5,17 @@ import Footer from "./Pages/Footer/Footer";
 import HomeNavbar from "./Pages/HomeNavbar/HomeNavbar";
 import Product from "./Pages/Product/Product";
 import RestockPage from "./Pages/Restock/RestockPage";
+import AddNewProductPage from "./Pages/AddNewProductPage/AddNewProductPage";
+import CameraPage from "./Pages/CameraPage/CameraPage";
+
 
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
 } from "react-router-dom"
+
+
 
 
 const Layout = () => {
@@ -53,13 +58,19 @@ const router = createBrowserRouter([
       path:"/product",
       element:<Product/>
     },
-   
-  
+    {
+      path:"/add-new-product",
+      element:<AddNewProductPage/>
+    },
+    {
+      path:"/camera",
+      element:<CameraPage/>
+    },
 ])
 
 function App() {
   return (
-    <div className="bg-gray-200 ">
+    <div className="bg-slate-50">
 
       <RouterProvider router={router} />
     </div>

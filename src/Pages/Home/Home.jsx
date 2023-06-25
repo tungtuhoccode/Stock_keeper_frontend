@@ -81,15 +81,6 @@ const AddMore = (props) => {
     }
     addProductElement.current.classList.add("go-in")
 
-    // addProductElement.current.classList.add("go-in")
-    //thêm hàng hoá
-    document.documentElement.style.setProperty('--translate-X-add-product', "0px");
-    setTimeout(()=>{
-      document.documentElement.style.setProperty('--translate-X-add-product', "-300px");
-      setTimeout(()=>{
-      document.documentElement.style.setProperty('--translate-X-add-product', "-250px");
-      },10)
-    },10)
   }
   //animation
   function goOut(){    
@@ -99,14 +90,6 @@ const AddMore = (props) => {
 
     addProductElement.current.classList.remove("go-in")
     addProductElement.current.classList.add("go-out")
-
-    //thêm hàng hoá
-    document.documentElement.style.setProperty('--translate-X-add-product', "-250px");
-    document.documentElement.style.setProperty('--opacity-value-add-product', "1");
-    setTimeout(()=>{
-      document.documentElement.style.setProperty('--translate-X-add-product', "0px");
-      document.documentElement.style.setProperty('--opacity-value-add-product', "0");
-    },1)
   }
 
   const AddNewProductIcon = (props) => {
@@ -126,14 +109,17 @@ const AddMore = (props) => {
 
       <section id="">
         {/* <Box ref={addProductElement} isShow={isShow}/> */}
-        <div ref={addProductElement} className={'relative flex flex-row items-center gap-[15px] mr-1 mb-2 right-[-250px]'}>
-          <div className='add-icon-shadow bg-white h-10 p-3 flex justify-center items-center rounded-lg'>Thêm hàng hoá</div>
-          <button className='circle-shadow w-12 h-12 rounded-full bg-[white] flex justify-center items-center'>
-            <Link to="/add-new-product">
-              <AddNewProductIcon />
+        
+
+          <div ref={addProductElement} className={'relative mr-1 mb-2 right-[-250px]'}>
+            <Link to="/add-new-product" className='flex flex-row items-center gap-[15px]'>
+              <div className='add-icon-shadow bg-white h-10 p-3 flex justify-center items-center rounded-lg'>Thêm hàng hoá</div>
+              <button className='circle-shadow w-12 h-12 rounded-full bg-[white] flex justify-center items-center'>
+                  <AddNewProductIcon />
+              </button>
             </Link>
-          </button>
-        </div>
+          </div>
+
       </section>
       
    

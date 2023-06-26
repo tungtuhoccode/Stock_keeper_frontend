@@ -1,0 +1,33 @@
+.select-input-go-in{
+    animation-name: select-input-go-in;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes select-input-go-in {
+    0% {
+        transform: translateX(100vw);
+    }
+
+    100%{
+        transform: translateX(0vw)
+    }
+}
+
+.select-input-go-out{
+    animation-name: select-input-go-out;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes select-input-go-out {
+    0% {
+        transform: translateX(0vw);
+    }
+
+    100%{
+        transform: translateX(100vw)
+    }
+}

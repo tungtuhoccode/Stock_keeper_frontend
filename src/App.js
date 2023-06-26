@@ -8,7 +8,6 @@ import RestockPage from "./Pages/Restock/RestockPage";
 import AddNewProductPage from "./Pages/AddNewProductPage/AddNewProductPage";
 import CameraPage from "./Pages/CameraPage/CameraPage";
 
-
 import {
   createBrowserRouter,
   RouterProvider,
@@ -66,6 +65,7 @@ const router = createBrowserRouter([
       path:"/camera",
       element:<CameraPage/>
     },
+
 ])
 
 function App() {

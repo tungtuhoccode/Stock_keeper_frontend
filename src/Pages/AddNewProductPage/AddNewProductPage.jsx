@@ -3,16 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import "./AddNewProductPage.css"
 import { useRef, useState , useEffect} from 'react';
+import NumberInput from '../../Components/Input/NumberInput' ;
+import BarcodeInput from '../../Components/Input/BarcodeInput';
 
-import { InputBase} from '@mui/material';
+import { Input, InputBase, TextField} from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 //Swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import Home from '../Home/Home';
 import Footer from '../Footer/Footer';
+import SelectInput from '../../Components/Input/SelectInput';
 
 const InputFieldElement = (props) => {
+    const [value,setValue] = useState(function(){
+        if (props.number){
+            return "100"
+        }
+        return ""
+    }())
     const getInputAdorment = () => {
         if(props.barcode) {
             return (
@@ -34,8 +43,16 @@ const InputFieldElement = (props) => {
             <InputBase
                 className='border-b-gray-300 mr-[10px] min-h-[40px] border-b-solid border-b-[0.5px] caret-[#3e87ad]'
                 sx={{fontSize:"15px"}}
-                type="number"
+                type= 'text'
                 variant='standard'
+                required
+
+                inputProps={props.number && {
+                    pattern:"[0-9]+",
+                    inputMode:'numeric'
+                }}
+                // value={value}
+                // onChange={(event) => handleInputChange(event)}
                 placeholder={props.description}
                 fullWidth
                 multiline
@@ -47,6 +64,7 @@ const InputFieldElement = (props) => {
         </div>
     )
 }
+
 let imageFiles = []
 const AddNewProductPage = () => {
     const [temp, setTemp] = useState(true)
@@ -54,8 +72,31 @@ const AddNewProductPage = () => {
     const thisPageElement = useRef(null)
     const [images,setImages] = useState([])
 
+    //INPUT FORM CONTROL 
 
+    const [price, setPrice] = useState({
+        displayValue: "",
+        actualNumberValue: 0
+    })
+    const [stock, setStock] = useState({
+        displayValue: "",
+        actualNumberValue: 0
+    })
+    const [cost, setCost] = useState({
+        displayValue: "",
+        actualNumberValue: 0
+    })
 
+    const [barcode, setBarcode] = useState("")
+    const [productName, setProductName] = useState("")
+    const [productCategory, setProductCategory] = useState("")
+    const [brand, setBrand] = useState("")
+
+    const [productLocation, setProductLocation] = useState("")
+
+    
+
+    //page animation
     const closePage = () => {
         thisPageElement.current.classList.remove("add-new-product-go-up")
         thisPageElement.current.classList.add("add-new-product-go-down")
@@ -68,34 +109,41 @@ const AddNewProductPage = () => {
 
     useEffect(()=>{
         window.scrollTo(0,0)
+        
+        //For page go up animation
         setTimeout(()=>{setTemp(false)},200)
     },[])
 
-    const ImagesElement = images?.map(url => {
+    const removeImage = (indexIn) => {
+        URL.revokeObjectURL(images[indexIn])
+        imageFiles = imageFiles.slice(0,indexIn).concat(imageFiles.slice(indexIn+1,imageFiles.length))
+        setImages(images.slice(0,indexIn).concat(images.slice(indexIn+1,images.length)))
+    }
+
+    const ImagesElement = images?.map((url, index) => {
         console.log(url)
         return (  
             <SwiperSlide className='relative top-[10px]'>
-                <div className='bg-[#bbb8b8] h-24 w-24 rounded-[13px]'>
-                    <img src={url} alt="url" className=' h-24 w-24 rounded-[13px]'/>
+                <div className='bg-[#bbb8b8] h-24 w-24 rounded-[13px] relative'>
+                    <CloseIcon className='absolute scale-[90%] right-1 top-1 bg-[#8f8a93] opacity-50 text-white rounded-full' onClick={()=>removeImage(index)}/>
+                    <img src={url} alt="url" className='h-24 w-24 rounded-[13px] object-cover'/>
                 </div>
             </SwiperSlide>
 
         )
     })
 
-    const addToImagesElement = (newUrl) => {
-
+    //Images control 
+    const addToImagesElement = (newUrl) => {//for image display
         console.log("added to image element")
         console.log(newUrl)
         setImages([...images, newUrl])
     }
 
-    const addToImageFiles = (newFile) => {
+    const addToImageFiles = (newFile) => {//for image files control
         console.log("added to image files")
         imageFiles.push(newFile)
     }
-
-    console.log(imageFiles)
   
     useEffect(()=> {
         return () => {
@@ -105,7 +153,7 @@ const AddNewProductPage = () => {
         }
     },[])
 
-
+    //Handle Camera picture taking
     const CameraElement = () => {
         const [selectedFile, setSelectedFile] = useState()
 
@@ -153,7 +201,7 @@ const AddNewProductPage = () => {
         </div>
        }
         
-        <div ref={thisPageElement} className='absolute top-0 right-0 w-screen h-screen add-new-product-go-up z-[5000] bg-slate-50'>
+        <div ref={thisPageElement} className='absolute top-0 right-0 w-screen h-screen add-new-product-go-up z-[1000] bg-slate-50 overflow-x-hidden'>
 {/* Navigation */}
             <nav className='flex flex-row justify-between items-center h-10 bg-white w-full p-4'>
                 <div className='flex flex-row gap-[10px]'>
@@ -175,7 +223,7 @@ const AddNewProductPage = () => {
                     direction="horizontal"
                     onSwiper={(swiper) => console.log(swiper)}
                     >
-                        <SwiperSlide className='ml-[15px] relative top-[10px]'>
+                        <SwiperSlide className='ml-[10px] relative top-[10px]'>
                             <CameraElement/>
                         </SwiperSlide>
                         {ImagesElement}
@@ -186,15 +234,14 @@ const AddNewProductPage = () => {
             </section>
 {/* MAIN FORM AREA */}
             <section className='bg-white rounded-t-xl px-2'>
-                <InputFieldElement name={"Mã hàng"} description={"Mã hàng tự động"} barcode={true}/>
-                <InputFieldElement name={"Mã vạch"} description={""} barcode={true}/>
+                <BarcodeInput name={"Mã vạch"} value={barcode} setStateFunction={setBarcode} description={""}/>
                 <InputFieldElement name={"Tên hàng"} description={"Tên hàng"} />
-                <InputFieldElement name={"Nhóm hàng"} description={"Chọn nhóm hàng"} select={true}/>
-                <InputFieldElement name={"Thương hiệu"} description={"Chọn thương hiệu"} select={true}/>
-                <InputFieldElement name={"Giá bán"} description={"0"}/>
-                <InputFieldElement name={"Giá vốn"} description={""}/>
-                <InputFieldElement name={"Tồn kho"} description={""}/>
-                <InputFieldElement name={"Vị trí"} description={"Chọn nơi để sản phẩm"} select={true}/>
+                <SelectInput name={"Nhóm hàng"} description={"Chọn nhóm hàng"}  value={productCategory} setStateFunction={setProductCategory} />
+                <SelectInput name={"Thương hiệu"} description={"Chọn thương hiệu"} value={brand} setStateFunction={setBrand}/>
+                <NumberInput name={"Giá bán"} value={price} setStateFunction = {setPrice}/>
+                <NumberInput name={"Giá vốn"} description={"0"} value={cost} setStateFunction={setCost}/>
+                <NumberInput name={"Tồn kho"} description={"0"} value={stock} setStateFunction = {setStock}/>
+                <SelectInput name={"Vị trí"} description={"Chọn nơi để sản phẩm"} value={productLocation} setStateFunction={setProductLocation}/>
             </section>
 
 {/* NOTES FORM AREA */}

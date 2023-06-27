@@ -5,6 +5,7 @@ import "./AddNewProductPage.css"
 import { useRef, useState , useEffect} from 'react';
 import NumberInput from '../../Components/Input/NumberInput' ;
 import BarcodeInput from '../../Components/Input/BarcodeInput';
+import TextInput from '../../Components/Input/TextInput';
 
 import { Input, InputBase, TextField} from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -93,7 +94,7 @@ const AddNewProductPage = () => {
     const [brand, setBrand] = useState("")
 
     const [productLocation, setProductLocation] = useState("")
-
+    
     
 
     //page animation
@@ -235,13 +236,13 @@ const AddNewProductPage = () => {
 {/* MAIN FORM AREA */}
             <section className='bg-white rounded-t-xl px-2'>
                 <BarcodeInput name={"Mã vạch"} value={barcode} setStateFunction={setBarcode} description={""}/>
-                <InputFieldElement name={"Tên hàng"} description={"Tên hàng"} />
-                <SelectInput name={"Nhóm hàng"} description={"Chọn nhóm hàng"}  value={productCategory} setStateFunction={setProductCategory} />
-                <SelectInput name={"Thương hiệu"} description={"Chọn thương hiệu"} value={brand} setStateFunction={setBrand}/>
+                <TextInput name={"Tên hàng"} value={productName} setStateFunction={setProductName} description={"Tên hàng"} />
+                <SelectInput name={"Nhóm hàng"} type="category" description={"Chọn nhóm hàng"}   value={productCategory} setStateFunction={setProductCategory} />
+                <SelectInput name={"Thương hiệu"} type="brand" description={"Chọn thương hiệu"} value={brand} setStateFunction={setBrand}/>
                 <NumberInput name={"Giá bán"} value={price} setStateFunction = {setPrice}/>
                 <NumberInput name={"Giá vốn"} description={"0"} value={cost} setStateFunction={setCost}/>
                 <NumberInput name={"Tồn kho"} description={"0"} value={stock} setStateFunction = {setStock}/>
-                <SelectInput name={"Vị trí"} description={"Chọn nơi để sản phẩm"} value={productLocation} setStateFunction={setProductLocation}/>
+                <SelectInput name={"Vị trí"} type="location" description={"Chọn nơi để sản phẩm"} value={productLocation} setStateFunction={setProductLocation}/>
             </section>
 
 {/* NOTES FORM AREA */}

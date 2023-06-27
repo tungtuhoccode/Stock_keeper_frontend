@@ -1,15 +1,21 @@
-import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputBase } from '@mui/material';
-
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import AddMoreOptions from './AddMoreOptions';
 import "./SelectInputOptions.css"
-
+import { addMoreCategory } from '../../app/productCategorySlice';
+import { addMoreBrand } from '../../app/brandsSlice';
+import {addMoreLocation} from '../../app/productStorageLocationSlice'
 import replaceVietnameseChar from './ReplaceVietnameseChar.js';
 
+
 const SelectInputOptions = (props) => {
+    const dispatch = useDispatch()
+
     const thisPage = useRef(null)
 
     const closePage = () => {
@@ -21,9 +27,49 @@ const SelectInputOptions = (props) => {
         },400)
     }
 
+
+
+
     const [search, setSearch] = useState("")
 
-    const rawOptions = ["Đèn pha", "Thân vỏ", "Camera", "Đèn Led", "Điện công nghiệp","Gia dụng", "Máy giặt"]
+    // const [rawOptions, setRawOptions] = useState(["Đèn pha", "Thân vỏ", "Camera", "Đèn Led", "Điện công nghiệp","Gia dụng", "Máy giặt"])
+    // const clickAddMoreOption = (newOption) => {
+    //     console.log("clicked")
+    //     setRawOptions([...rawOptions, newOption])
+    // }
+
+    const sliceVariables = {
+        category: {
+            optionsName:"category",
+            addMoreOption: (newCategory) => dispatch(addMoreCategory(newCategory)),
+            addMoreBoxTitle: "Thêm nhóm hàng",
+            addMoreBoxPlaceholder: "Tên nhóm hàng"
+        },
+        brand: {
+            optionsName:"brand",
+            addMoreOption: (newBrand) => dispatch(addMoreBrand(newBrand)),
+            addMoreBoxTitle: "Thêm thương hiệu",
+            addMoreBoxPlaceholder: "Tên thương hiệu"
+        },
+        location: {
+            optionsName:"location",
+            addMoreOption: (newLocation) => dispatch(addMoreLocation(newLocation)),
+            addMoreBoxTitle: "Thêm vị trí",
+            addMoreBoxPlaceholder: "Vị trí mới"
+        },
+    }
+
+    let type = props.type
+    let sliceName = sliceVariables[type].optionsName
+    console.log(sliceName)
+
+    //state.category.category
+    const rawOptions = useSelector(state => state[sliceName][sliceName])
+
+    const clickAddMoreOption = (newOption) => {
+        console.log("clicked")
+        sliceVariables[type].addMoreOption(newOption)
+    }
 
     const options = (()=> {
         let newOptions = []
@@ -35,10 +81,9 @@ const SelectInputOptions = (props) => {
         }
         return newOptions
     })()
-    // const options = ["Điện công nghiệp"]
-    // for (let i=0;i<rawOptions.length;i++){
-    //     console.log(replaceVietnameseChar(options[i]))
-    // }
+
+
+
     /*
     aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬ
     dDđĐ
@@ -47,14 +92,14 @@ const SelectInputOptions = (props) => {
     oOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢ
     uUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰ
     yYỳỲỷỶỹỸýÝỵỴ
-     */
+    */
 
     const optionsElement = () => {
         let elements = []
         for (let i=0;i<options.length;i++){
             if(options[i].searchValue.toLowerCase().includes(replaceVietnameseChar(search.toLowerCase()))){
                 elements.push(
-                    <div className='h-12 pl-4 pr-4 w-ful flex flex-col justify-center ' onClick={() => {
+                    <div className='h-12 pl-4 pr-4 w-full flex flex-col justify-center cursor-pointer' onClick={() => {
                         props.setStateFunction(options[i].actualValue)
                         closePage()
                     }}> 
@@ -68,6 +113,8 @@ const SelectInputOptions = (props) => {
         return elements
     }
 
+    const [isAddMoreOption, setIsAddMoreOption] = useState(false)
+
     return (
         <div ref={thisPage} className='absolute top-0 left-0 w-screen h-screen z-[3000] bg-slate-50 select-input-go-in' >
 {/* Navigation */}
@@ -77,11 +124,11 @@ const SelectInputOptions = (props) => {
                         <div>
                             <CloseIcon onClick={() => closePage()} className='scale-[120%] text-gray-500'/>
                         </div>
-                        <p className='font-[500] text-base'>Chọn nhóm hàng</p>
+                        <p className='font-[500] text-base'>{props.description}</p>
                     </div>
                     <div>
                         <p className='text-[18px] text-gray-500'>
-                            <AddIcon/>
+                            <AddIcon className='cursor-pointer' onClick={() => setIsAddMoreOption(true)}/>
                         </p>
                     </div>
                 </div>
@@ -98,26 +145,17 @@ const SelectInputOptions = (props) => {
             </nav>
 {/* Select elements */}
             <div className='mt-[10px] w-full rounded-t-xl bg-[white] flex-col items-center justify-center'>
-                {/* <div className='h-12 pl-4 pr-4 w-ful flex flex-col justify-center' onClick={() => {
-                    props.setStateFunction("Đèn pha")
-                    closePage()
-                    }}> 
-                    <p className='pl-2 text-[15px]'>Đèn pha</p>
-                 </div>
-                 <hr className='ml-4 mr-4'/>
-                 <div className='h-12 pl-4 pr-4 w-ful flex flex-col justify-center'> 
-                    <p className='pl-2 text-[15px]'>Gia dụng</p>
-                 </div>
-                 <hr className='ml-4 mr-4'/>
-                 <div className='h-12 pl-4 pr-4 w-ful flex flex-col justify-center'> 
-                    <p className='pl-2 text-[15px]'>Nhà bếp</p>
-                 </div>
-                 <hr className='ml-4 mr-4'/>
-                 <div className='h-12 pl-4 pr-4 w-ful flex flex-col justify-center'> 
-                    <p className='pl-2 text-[15px]'>Rượu</p>
-                 </div>
-                 <hr className='ml-4 mr-4'/> */}
                  {optionsElement()}
+            </div>
+            <div>
+                {isAddMoreOption &&  
+                    <AddMoreOptions 
+                        description = {sliceVariables[type].addMoreBoxTitle}
+                        placeholder = {sliceVariables[type].addMoreBoxPlaceholder}
+                        clickAddMoreOption={(newOption)=>clickAddMoreOption(newOption)}
+                        closeAddMoreOptions = {() => setIsAddMoreOption(false)}
+                    />
+                }
             </div>
         </div>
 

@@ -8,14 +8,13 @@ import RestockPage from "./Pages/Restock/RestockPage";
 import AddNewProductPage from "./Pages/AddNewProductPage/AddNewProductPage";
 import CameraPage from "./Pages/CameraPage/CameraPage";
 
+import SearchProduct from "./Pages/SearchProduct/SearchProduct";
+
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
 } from "react-router-dom"
-
-
-
 
 const Layout = () => {
 
@@ -65,6 +64,13 @@ const router = createBrowserRouter([
       path:"/camera",
       element:<CameraPage/>
     },
+
+
+    {
+      path:"/search_product",
+      element:<SearchProduct/>
+    },
+    
 
 ])
 

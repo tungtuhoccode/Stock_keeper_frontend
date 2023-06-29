@@ -20,11 +20,12 @@ const SelectInput = (props) => {
                 variant='standard'
                 required
                 value = {value}
-                readOnly
                 placeholder={props.description}
                 fullWidth
                 multiline
-                onWheel={event => { event.preventDefault(); }}
+                onChange={(event) => {
+                    props.setStateFunction(event.target.value)
+                }}
             />
         </div>
     )

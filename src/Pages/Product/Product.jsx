@@ -11,10 +11,7 @@ function Product() {
     return (
 
       <div className="product">
-        <Link to="/">
-          <button className="bg-gray-200">Go back</button>
-        </Link>
-        <h1> PAGE SẢN PHẨM</h1>
+        
       </div>
     )
   }

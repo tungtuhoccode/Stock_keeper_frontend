@@ -1,4 +1,4 @@
-import { Input, InputBase, TextField} from '@mui/material';
+import {InputBase} from '@mui/material';
 
 const BarcodeInput = (props) => {
     console.log("value: "+props.value)

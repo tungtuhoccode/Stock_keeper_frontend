@@ -9,9 +9,14 @@ function InventoryItem(props) {
     let code = props.code || "SP000001"
     let price = props.price || "120,000,000"
     let stock = props.stock || "30"
+    const strPrice = ("" + price).replace(/[^0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    let color = {
+      backgroundColor: props.backgroundColor || "white"
+    }
     return (
     
-      <div className="w-full mb-1 px-1 bg-white">
+      <div style={color} className="w-full mb-1 px-1">
           <hr style={{width:"calc(100% - 15px)"}} className="my-1 mx-auto"></hr>
 
             <div className="flex flex-row px-2">
@@ -27,10 +32,9 @@ function InventoryItem(props) {
                     <h1 className="text-[14px]  font-[400] text-gray-500">{code}</h1>
                   </div>
                   <div className="flex flex-col justify-between max-w-[40%]">
-                    <p className="text-[16px]"> {price}₫</p>
+                    <p className="text-[16px]"> {strPrice}₫</p>
                     <p className="text-[16px] self-end text-[#3e87ad] mb-2"><span className="text-[14px]">Còn:</span> {stock}</p>
                   </div>
-              
                 </Link>
 
             </div>

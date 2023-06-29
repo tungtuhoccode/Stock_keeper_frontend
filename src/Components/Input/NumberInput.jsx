@@ -1,4 +1,4 @@
-import { Input, InputBase, TextField} from '@mui/material';
+import {InputBase} from '@mui/material';
 
 const NumberInput = (props) => {
     let value = props.value.displayValue

@@ -8,18 +8,14 @@ const theme = createTheme(
       palette: {
         primary: {
           main: '#3e87ad',
-
         },
-  
       }
     }
 );
 
-
 const AddMoreOptions = (props) => {
     const [value, setValue] = useState("")
     const [isSubmitedEmpty, setSubmitEmpty] = useState(false)
-
 
     return (
         <div>

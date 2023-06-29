@@ -71,10 +71,14 @@ const AddNewProductPage = () => {
     const [temp, setTemp] = useState(true)
     const navigate = useNavigate()
     const thisPageElement = useRef(null)
-    const [images,setImages] = useState([])
+
 
     //INPUT FORM CONTROL 
-
+    const [images,setImages] = useState([])
+    const [barcode, setBarcode] = useState("")
+    const [productName, setProductName] = useState("")
+    const [productCategory, setProductCategory] = useState("")
+    const [brand, setBrand] = useState("")
     const [price, setPrice] = useState({
         displayValue: "",
         actualNumberValue: 0
@@ -87,20 +91,13 @@ const AddNewProductPage = () => {
         displayValue: "",
         actualNumberValue: 0
     })
-
-    const [barcode, setBarcode] = useState("")
-    const [productName, setProductName] = useState("")
-    const [productCategory, setProductCategory] = useState("")
-    const [brand, setBrand] = useState("")
-
     const [productLocation, setProductLocation] = useState("")
-    
-    
 
     //page animation
     const closePage = () => {
         thisPageElement.current.classList.remove("add-new-product-go-up")
         thisPageElement.current.classList.add("add-new-product-go-down")
+
         setTemp(true)
 
         setTimeout(() => {
@@ -114,7 +111,8 @@ const AddNewProductPage = () => {
         //For page go up animation
         setTimeout(()=>{setTemp(false)},200)
     },[])
-
+    
+    //Images control 
     const removeImage = (indexIn) => {
         URL.revokeObjectURL(images[indexIn])
         imageFiles = imageFiles.slice(0,indexIn).concat(imageFiles.slice(indexIn+1,imageFiles.length))
@@ -126,7 +124,10 @@ const AddNewProductPage = () => {
         return (  
             <SwiperSlide className='relative top-[10px]'>
                 <div className='bg-[#bbb8b8] h-24 w-24 rounded-[13px] relative'>
-                    <CloseIcon className='absolute scale-[90%] right-1 top-1 bg-[#8f8a93] opacity-50 text-white rounded-full' onClick={()=>removeImage(index)}/>
+                    <CloseIcon 
+                        className='absolute scale-[90%] right-1 top-1 bg-[#8f8a93] opacity-50 text-white rounded-full' 
+                        onClick={() => removeImage(index)}
+                    />
                     <img src={url} alt="url" className='h-24 w-24 rounded-[13px] object-cover'/>
                 </div>
             </SwiperSlide>
@@ -134,7 +135,6 @@ const AddNewProductPage = () => {
         )
     })
 
-    //Images control 
     const addToImagesElement = (newUrl) => {//for image display
         console.log("added to image element")
         console.log(newUrl)

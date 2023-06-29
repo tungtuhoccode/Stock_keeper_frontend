@@ -13,40 +13,81 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
 
 let data = [
-  {
+  { 
+    name: "Đèn pha Prado",
+    price: 120000000,
+    stock: 37,
     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
   },
   {
+    name: "Đèn hậu ngoài Cross",
+    price: 30000000,
+    stock: 46,
     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Cross/Den-hau-ngoai-Cross-2020-815510A060-815610A060(1).JPG"
   },
   {
+    name: "Tubor County",
+    price: 39000000,
+    stock: 55,
     imageSource: "https://phutungotottc.com/app/webroot/upload/images/Hyundai/Tubor-County.JPG"
   },
   {
+    name: "Túi khí trần vios",
+    price: 48000000,
+    stock: 32,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
+  },
+  { 
+    name: "Đèn pha Prado",
+    price: 120000000,
+    stock: 37,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
+  },
+  {
+    name: "Đèn hậu ngoài Cross",
+    price: 30000000,
+    stock: 46,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Cross/Den-hau-ngoai-Cross-2020-815510A060-815610A060(1).JPG"
+  },
+  {
+    name: "Tubor County",
+    price: 39000000,
+    stock: 55,
+    imageSource: "https://phutungotottc.com/app/webroot/upload/images/Hyundai/Tubor-County.JPG"
+  },
+  {
+    name: "Túi khí trần vios",
+    price: 48000000,
+    stock: 32,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
+  }, { 
+    name: "Đèn pha Prado",
+    price: 120000000,
+    stock: 37,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
+  },
+  {
+    name: "Đèn hậu ngoài Cross",
+    price: 30000000,
+    stock: 46,
+    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Cross/Den-hau-ngoai-Cross-2020-815510A060-815610A060(1).JPG"
+  },
+  {
+    name: "Tubor County",
+    price: 39000000,
+    stock: 55,
+    imageSource: "https://phutungotottc.com/app/webroot/upload/images/Hyundai/Tubor-County.JPG"
+  },
+  {
+    name: "Túi khí trần vios",
+    price: 48000000,
+    stock: 32,
     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
   },
   {
-    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Cross/Den-hau-ngoai-Cross-2020-815510A060-815610A060(1).JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload/images/Hyundai/Tubor-County.JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Prado/2010-/Den-pha-Prado-2018-8118560N20-8114560N20(1).JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Cross/Den-hau-ngoai-Cross-2020-815510A060-815610A060(1).JPG"
-  },
-  {
-    imageSource: "https://phutungotottc.com/app/webroot/upload/images/Hyundai/Tubor-County.JPG"
-  },
-  {
+    name: "Túi khí trần vios",
+    price: 48000000,
+    stock: 32,
     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
   },
 ]
@@ -137,6 +178,19 @@ const AddMore = (props) => {
 function Home() {
     const [isShow, setShow] = useState(false)
     const [imageUrl, setImageUrl] = useState("")
+
+    function getStock() {
+      let stock = 0
+      for(let i=0;i<data.length;i++){
+        stock += data[i].stock
+      }
+      return stock
+    }
+
+    const [numbProduct, setNumbProduct] = useState(data.length || 0)
+    const [allProductStock, setAllProductStock] = useState(getStock())
+
+
     const showImage = (url) => {
       setImageUrl(url)
       setShow(true)
@@ -147,7 +201,12 @@ function Home() {
     }
     
     const InventoryItemElements = data.map(element => {
-      return  <InventoryItem imageSource={element.imageSource} clickShowImage = {(url) =>{showImage(url)} }/>
+      return  <InventoryItem 
+        name = {element.name}
+        price = {element.price}
+        stock = {element.stock}
+        imageSource={element.imageSource} 
+        clickShowImage = {(url) =>{showImage(url)} }/>
     });
     
     return (
@@ -160,9 +219,9 @@ function Home() {
           <nav className='nav-section2'>
             <div className="flex flex-row justify-between w-full p-2">
               <p>
-                <span style={{color:"#3e87ad"}}>26 </span>
+                <span style={{color:"#3e87ad"}}>{numbProduct} </span>
                  hàng hoá - Tổng tồn 
-                 <span style={{color:"#3e87ad"}}> 204</span>
+                 <span style={{color:"#3e87ad"}}> {allProductStock}</span>
 
               </p>
               <div className="flex flex-row jusitfy-center aligns-center">

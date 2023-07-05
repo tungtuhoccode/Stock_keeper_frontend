@@ -102,11 +102,10 @@
         opacity: 1;
         transform: translateX(-250px);
     }
-    40%{
+    50%{
         opacity: 0;
     }
     100%{
-        opacity: 0;
         transform: translateX(0px);
     }
 }

@@ -9,7 +9,6 @@ function RestockPage() {
     
 
     return (
-
       <div className="product">
         <Link to="/">
           <button className="bg-gray-200">Go back</button>

@@ -1,6 +1,6 @@
 .add-new-product-go-up{
     animation-name: add-new-product-go-up;
-    animation-duration: 0.4s;
+    animation-duration: 0.3s;
     animation-fill-mode: forwards;
     animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
@@ -20,7 +20,7 @@
 
 .add-new-product-go-down{
     animation-name: add-new-product-go-down;
-    animation-duration: 0.4s;
+    animation-duration: 0.3s;
     animation-fill-mode: forwards;
     animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }

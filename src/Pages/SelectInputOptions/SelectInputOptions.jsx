@@ -7,11 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import AddMoreOptions from './AddMoreOptions';
 import "./SelectInputOptions.css"
-import { addMoreCategory } from '../../app/productCategorySlice';
-import { addMoreBrand } from '../../app/brandsSlice';
-import {addMoreLocation} from '../../app/productStorageLocationSlice'
+import { addNewCategory, fetchCategories } from '../../app/productCategorySlice';
+import { addNewBrand, fetchAllBrands } from '../../app/brandsSlice';
+import {addNewStorageLocation, addStorageLocation, fetchStorageLocations} from '../../app/productStorageLocationSlice'
 import replaceVietnameseChar from './ReplaceVietnameseChar.js';
-
 
 const SelectInputOptions = (props) => {
     const dispatch = useDispatch()
@@ -27,9 +26,6 @@ const SelectInputOptions = (props) => {
         },400)
     }
 
-
-
-
     const [search, setSearch] = useState("")
 
     // const [rawOptions, setRawOptions] = useState(["Đèn pha", "Thân vỏ", "Camera", "Đèn Led", "Điện công nghiệp","Gia dụng", "Máy giặt"])
@@ -40,34 +36,44 @@ const SelectInputOptions = (props) => {
 
     const sliceVariables = {
         category: {
-            optionsName:"category",
-            addMoreOption: (newCategory) => dispatch(addMoreCategory(newCategory)),
+            optionsName:"categories",
             addMoreBoxTitle: "Thêm nhóm hàng",
-            addMoreBoxPlaceholder: "Tên nhóm hàng"
+            addMoreBoxPlaceholder: "Tên nhóm hàng",
+            addMoreOption: (newCategory) => dispatch(addNewCategory(
+                {"category_name":   newCategory})),
+            fetchFunction: () => dispatch(fetchCategories()),
+            sliceObjectNameAttribute: "category_name"
         },
         brand: {
-            optionsName:"brand",
-            addMoreOption: (newBrand) => dispatch(addMoreBrand(newBrand)),
+            optionsName:"brands",
+            addMoreOption: (newBrand) => dispatch(addNewBrand({
+                "brand_name":   newBrand
+            })),
+            fetchFunction: () => dispatch(fetchAllBrands()),
             addMoreBoxTitle: "Thêm thương hiệu",
-            addMoreBoxPlaceholder: "Tên thương hiệu"
+            addMoreBoxPlaceholder: "Tên thương hiệu",
+            sliceObjectNameAttribute: "brand_name"
         },
         location: {
-            optionsName:"location",
-            addMoreOption: (newLocation) => dispatch(addMoreLocation(newLocation)),
+            optionsName:"locations",
+            addMoreOption: (newLocation) => dispatch(addNewStorageLocation({
+                "storage_location_name":newLocation
+            })),
+            fetchFunction: () => dispatch(fetchStorageLocations()),
             addMoreBoxTitle: "Thêm vị trí",
-            addMoreBoxPlaceholder: "Vị trí mới"
+            addMoreBoxPlaceholder: "Vị trí mới",
+            sliceObjectNameAttribute: "storage_location_name"
         },
     }
 
     let type = props.type
     let sliceName = sliceVariables[type].optionsName
-    console.log(sliceName)
 
     //state.category.category
     const rawOptions = useSelector(state => state[sliceName][sliceName])
 
     const clickAddMoreOption = (newOption) => {
-        console.log("clicked")
+        // console.log("clicked")
         sliceVariables[type].addMoreOption(newOption)
     }
 
@@ -75,14 +81,13 @@ const SelectInputOptions = (props) => {
         let newOptions = []
         for (let i=0;i<rawOptions.length;i++){
             newOptions.push({
-                actualValue: rawOptions[i],
-                searchValue: replaceVietnameseChar(rawOptions[i])
+                id:rawOptions[i].id,
+                actualValue: rawOptions[i][sliceVariables[type].sliceObjectNameAttribute],
+                searchValue: replaceVietnameseChar(rawOptions[i][sliceVariables[type].sliceObjectNameAttribute])
             })
         }
         return newOptions
     })()
-
-
 
     /*
     aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬ
@@ -100,7 +105,10 @@ const SelectInputOptions = (props) => {
             if(options[i].searchValue.toLowerCase().includes(replaceVietnameseChar(search.toLowerCase()))){
                 elements.push(
                     <div className='h-12 pl-4 pr-4 w-full flex flex-col justify-center cursor-pointer' onClick={() => {
-                        props.setStateFunction(options[i].actualValue)
+                        props.setStateFunction({
+                            name: options[i].actualValue,
+                            id: options[i].id
+                        })
                         closePage()
                     }}> 
                         <p className='pl-2 text-[15px]'>{options[i].actualValue}</p>
@@ -152,7 +160,7 @@ const SelectInputOptions = (props) => {
                     <AddMoreOptions 
                         description = {sliceVariables[type].addMoreBoxTitle}
                         placeholder = {sliceVariables[type].addMoreBoxPlaceholder}
-                        clickAddMoreOption={(newOption)=>clickAddMoreOption(newOption)}
+                        clickAddMoreOption={(newOption)=> clickAddMoreOption(newOption)}
                         closeAddMoreOptions = {() => setIsAddMoreOption(false)}
                     />
                 }

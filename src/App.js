@@ -9,12 +9,15 @@ import AddNewProductPage from "./Pages/AddNewProductPage/AddNewProductPage";
 import CameraPage from "./Pages/CameraPage/CameraPage";
 
 import SearchProduct from "./Pages/SearchProduct/SearchProduct";
+import TestFirebase from "./Pages/TestFirebase";
 
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
 } from "react-router-dom"
+
+import API_URL from "./constants/routeConstants"
 
 const Layout = () => {
 
@@ -53,7 +56,7 @@ const router = createBrowserRouter([
       ]
     },
     {
-      path:"/product",
+      path:"/product/:id",
       element:<Product/>
     },
     {
@@ -65,10 +68,15 @@ const router = createBrowserRouter([
       element:<CameraPage/>
     },
 
-
+// Developing path
     {
       path:"/search_product",
       element:<SearchProduct/>
+    },
+
+    {
+      path:"/test_firebase",
+      element:<TestFirebase/>
     },
     
 

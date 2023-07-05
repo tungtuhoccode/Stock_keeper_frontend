@@ -14,7 +14,7 @@ const SelectInput = (props) => {
 
     const [showOption, setShowOption] = useState(false)
 
-    console.log("show option:", showOption)
+    // console.log("show option:", showOption)
 
     return (
         <div className='flex justify-center items-center mb-[10px]' onClick={() => {if(!showOption){setShowOption(true)}}}>

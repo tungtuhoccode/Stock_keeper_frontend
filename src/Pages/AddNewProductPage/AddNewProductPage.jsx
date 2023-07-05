@@ -1,4 +1,4 @@
-import CloseIcon from '@mui/icons-material/Close';
+
 import { Link, useNavigate } from 'react-router-dom';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import "./AddNewProductPage.css"
@@ -7,14 +7,25 @@ import NumberInput from '../../Components/Input/NumberInput' ;
 import BarcodeInput from '../../Components/Input/BarcodeInput';
 import TextInput from '../../Components/Input/TextInput';
 
+import CircularProgress from '@mui/material/CircularProgress';
+
 import { Input, InputBase, TextField} from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 //Swiper
+import CloseIcon from '@mui/icons-material/Close';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import Home from '../Home/Home';
 import Footer from '../Footer/Footer';
 import SelectInput from '../../Components/Input/SelectInput';
+import { addProduct } from '../../app/productSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import uploadFile from "../../services/firebaseImageUpload";
+import GrayBackground from '../../Components/GrayBackground/GrayBackground';
+
+import { fetchAllBrands } from '../../app/brandsSlice';
+import { fetchCategories } from '../../app/productCategorySlice';
+import { fetchStorageLocations } from '../../app/productStorageLocationSlice';
 
 const InputFieldElement = (props) => {
     const [value,setValue] = useState(function(){
@@ -68,17 +79,47 @@ const InputFieldElement = (props) => {
 
 let imageFiles = []
 const AddNewProductPage = () => {
+    const products = useSelector(state => state.products.products)
+    const productsRequestStatus = useSelector(state => state.products.status)
+    const productsRequestError = useSelector(state => state.products.error)
+    const [addProductStatus, setAddProductStatus] = useState("idle")
+
+    const dispatch = useDispatch()
+    
     const [temp, setTemp] = useState(true)
     const navigate = useNavigate()
     const thisPageElement = useRef(null)
 
+    useEffect(()=>{
+        if(productsRequestStatus == "loading"){
+            setAddProductStatus("loading")
+        }else{
+            setAddProductStatus("idle")
+        }
+    },[productsRequestStatus])
 
+    useEffect(()=>{
+        dispatch(fetchAllBrands())
+        dispatch(fetchCategories())
+        dispatch(fetchStorageLocations())
+        imageFiles = []
+    },[])
     //INPUT FORM CONTROL 
     const [images,setImages] = useState([])
     const [barcode, setBarcode] = useState("")
     const [productName, setProductName] = useState("")
-    const [productCategory, setProductCategory] = useState("")
-    const [brand, setBrand] = useState("")
+    const [productCategory, setProductCategory] = useState({
+        name: "",
+        id: undefined
+    })
+    const [brand, setBrand] = useState({
+        name: "",
+        id: undefined
+    })
+    const [productLocation, setProductLocation] = useState({
+        name: "",
+        id: undefined
+    })
     const [price, setPrice] = useState({
         displayValue: "",
         actualNumberValue: 0
@@ -91,7 +132,63 @@ const AddNewProductPage = () => {
         displayValue: "",
         actualNumberValue: 0
     })
-    const [productLocation, setProductLocation] = useState("")
+    
+
+    const handleSubmitProduct = async () => {
+        console.log("add product status: ", addProductStatus)
+        if(addProductStatus === "loading") return 
+        setAddProductStatus("loading")
+        console.log("trying to add")
+        // @TODO: add check for all fields
+        if (productName === "" ){
+            console.log("Product name cannot be empty")
+            return 
+        }
+        if (productCategory === "" ){
+            console.log("Category cannot be empty")
+            return
+        }
+
+        try{
+            const start = Date.now();
+
+
+
+            let imageUrls = []
+            for (let i=0;i<imageFiles.length;i++){
+                const imageUrl = await uploadFile(imageFiles[i])
+                imageUrls.push(imageUrl)
+            }
+            imageFiles = []
+
+            const end = Date.now();
+            console.log(`Image upload time: ${end - start} ms`);
+
+            const result = await dispatch(addProduct({
+                    "barcode": barcode,
+                    "product_name": productName,
+                    "category_id": productCategory.id,
+                    "brand_id": brand.id,
+                    "price": price.actualNumberValue,
+                    "import_price": cost.actualNumberValue,
+                    "stock": stock.actualNumberValue, 
+                    "image_urls": imageUrls,
+                    "storage_location_id": productLocation.id
+                }
+            ))
+
+            console.log(result)
+            navigate("/")
+        }
+        catch(err){
+            console.log(err)
+        }
+        //upload image to firebase and get the url
+        
+        return 
+    }
+    // console.log("product:", products)
+    // console.log("status:", productsRequestStatus)
 
     //page animation
     const closePage = () => {
@@ -109,7 +206,7 @@ const AddNewProductPage = () => {
         window.scrollTo(0,0)
         
         //For page go up animation
-        setTimeout(()=>{setTemp(false)},200)
+        setTimeout(()=>{setTemp(false)},700)
     },[])
     
     //Images control 
@@ -171,6 +268,9 @@ const AddNewProductPage = () => {
         }, [selectedFile])
 
         const onSelectFile = e => {
+            console.log("file selected")
+            console.log("file: ",e.target.files)
+
             if (!e.target.files || e.target.files.length === 0) {
                 setSelectedFile(undefined)
                 return
@@ -182,7 +282,7 @@ const AddNewProductPage = () => {
         }
         return (
             <div>
-                <input type="file" id="upload-photo" accept="image/*" className='z-[-1] opacity-0 absolute cursor-pointer' onChange={onSelectFile}/>
+                <input type="file" id="upload-photo" accept="image/*" className='z-[-1] opacity-0 absolute cursor-pointer' onChange={(event) => onSelectFile(event)}/>
                 <label htmlFor="upload-photo" className='flex items-center justify-center bg-[#bbb8b8] opacity-30 h-24 w-24 rounded-[13px]'>
                     <CameraAltOutlinedIcon className='text-white scale-150'/>
                 </label>
@@ -191,17 +291,26 @@ const AddNewProductPage = () => {
         )
     }
 
+
 //THE PAGE
     return (
         <div>
        {
         temp &&
         <div>
-            <Home classList="absolute z-[1]"/>
+            <Home noFetch = {true} classList="absolute z-[1]"/>
             <Footer classList="absolute z-[1]"/>
         </div>
        }
-        
+        {
+            addProductStatus === "loading" && 
+            <div className='z-[5000]'>
+                <GrayBackground/>
+                <CircularProgress  sx={{color: "red" }}
+               className='z-[5000] absolute bottom-1/2 translate-y-[-50%] right-1/2 translate-x-[-50%]'/>
+               <p className='z-[5000] absolute top-0 bg-red-50'>Đang lưu dữ liệu vào database</p>
+            </div>
+        }
         <div ref={thisPageElement} className='absolute top-0 right-0 w-screen h-screen add-new-product-go-up z-[1000] bg-slate-50 overflow-x-hidden'>
 {/* Navigation */}
             <nav className='flex flex-row justify-between items-center h-10 bg-white w-full p-4'>
@@ -211,8 +320,12 @@ const AddNewProductPage = () => {
                     </div>
                     <p className='font-[500] text-base'>Thêm hàng hoá</p>
                 </div>
-                <div>
-                    <p className='text-[#3e87ad] text-[18px]'>Lưu</p>
+                <div onClick={() => handleSubmitProduct()}>
+                    <p className='text-[#3e87ad] text-[18px]'
+                        
+                    >
+                        Lưu
+                    </p>
                 </div>
             </nav>
 {/* PICTURES SLIDES*/}
@@ -237,12 +350,12 @@ const AddNewProductPage = () => {
             <section className='bg-white rounded-t-xl px-2'>
                 <BarcodeInput name={"Mã vạch"} value={barcode} setStateFunction={setBarcode} description={""}/>
                 <TextInput name={"Tên hàng"} value={productName} setStateFunction={setProductName} description={"Tên hàng"} />
-                <SelectInput name={"Nhóm hàng"} type="category" description={"Chọn nhóm hàng"}   value={productCategory} setStateFunction={setProductCategory} />
-                <SelectInput name={"Thương hiệu"} type="brand" description={"Chọn thương hiệu"} value={brand} setStateFunction={setBrand}/>
+                <SelectInput name={"Nhóm hàng"} type="category" description={"Chọn nhóm hàng"}   value={productCategory.name} setStateFunction={setProductCategory} />
+                <SelectInput name={"Thương hiệu"} type="brand" description={"Chọn thương hiệu"} value={brand.name} setStateFunction={setBrand}/>
                 <NumberInput name={"Giá bán"} value={price} setStateFunction = {setPrice}/>
                 <NumberInput name={"Giá vốn"} description={"0"} value={cost} setStateFunction={setCost}/>
                 <NumberInput name={"Tồn kho"} description={"0"} value={stock} setStateFunction = {setStock}/>
-                <SelectInput name={"Vị trí"} type="location" description={"Chọn nơi để sản phẩm"} value={productLocation} setStateFunction={setProductLocation}/>
+                <SelectInput name={"Vị trí"} type="location" description={"Chọn nơi để sản phẩm"} value={productLocation.name} setStateFunction={setProductLocation}/>
             </section>
 
 {/* NOTES FORM AREA */}

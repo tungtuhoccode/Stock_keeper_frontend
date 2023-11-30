@@ -13,22 +13,27 @@ import { useEffect, useState } from 'react';
 
 function Footer() {
     const location = useLocation();
-    const [lastClickIndex, setLastClickIndex] = useState(0)
+    const [lastClickIndex, setLastClickIndex] = useState<Number>(0)
 
     useEffect(()=>{
-      setLastClickIndex(function(){
+      setLastClickIndex(function (){
         const currentURL = location.pathname
         if(currentURL === "/") return 3
+        
         if(currentURL === "/restock") return 2
+
         return 0
       }())
     },[location.pathname])
-    const click = (id) => {
+
+    const click = (id: Number) => {
       setLastClickIndex(id)
     }
-    const isClicked = (thisIndex) => {
+    
+    const isClicked = (thisIndex : Number) => {
       return thisIndex === lastClickIndex
     }
+
     return (
       <div className="footer">
 

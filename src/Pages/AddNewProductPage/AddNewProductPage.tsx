@@ -2,7 +2,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import "./AddNewProductPage.css"
-import { useRef, useState , useEffect} from 'react';
+import { useRef, useState , useEffect, RefObject} from 'react';
 import NumberInput from '../../Components/Input/NumberInput' ;
 import BarcodeInput from '../../Components/Input/BarcodeInput';
 import TextInput from '../../Components/Input/TextInput';
@@ -26,69 +26,79 @@ import GrayBackground from '../../Components/GrayBackground/GrayBackground';
 import { fetchAllBrands } from '../../app/brandsSlice';
 import { fetchCategories } from '../../app/productCategorySlice';
 import { fetchStorageLocations } from '../../app/productStorageLocationSlice';
+import {ThunkDispatch} from "@reduxjs/toolkit";
+// const InputFieldElement = (props) => {
+//     const [value,setValue] = useState(function(){
+//         if (props.number){
+//             return "100"
+//         }
+//         return ""
+//     }())
+//     const getInputAdorment = () => {
+//         if(props.barcode) {
+//             return (
+//                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#868787" viewBox="0 0 16 16"> 
+//                     <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5zM3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z"/>
+//                 </svg>
+//             )
+//         }
+//         if (props.select){
+//             return (
+//                 <KeyboardArrowRightIcon sx={{color: "#565757"}}/>
+//             )
+//         }
+//         return ""
+//     }
+//     return (
+//         <div className='flex justify-center items-center mb-[10px]'>
+//             <p className='pl-2 text-[15px] w-[45%]'>{props.name}</p>
+//             <InputBase
+//                 className='border-b-gray-300 mr-[10px] min-h-[40px] border-b-solid border-b-[0.5px] caret-[#3e87ad]'
+//                 sx={{fontSize:"15px"}}
+//                 type= 'text'
+//                 variant='standard'
+//                 required
 
-const InputFieldElement = (props) => {
-    const [value,setValue] = useState(function(){
-        if (props.number){
-            return "100"
-        }
-        return ""
-    }())
-    const getInputAdorment = () => {
-        if(props.barcode) {
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#868787" viewBox="0 0 16 16"> 
-                    <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5zM3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z"/>
-                </svg>
-            )
-        }
-        if (props.select){
-            return (
-                <KeyboardArrowRightIcon sx={{color: "#565757"}}/>
-            )
-        }
-        return ""
-    }
-    return (
-        <div className='flex justify-center items-center mb-[10px]'>
-            <p className='pl-2 text-[15px] w-[45%]'>{props.name}</p>
-            <InputBase
-                className='border-b-gray-300 mr-[10px] min-h-[40px] border-b-solid border-b-[0.5px] caret-[#3e87ad]'
-                sx={{fontSize:"15px"}}
-                type= 'text'
-                variant='standard'
-                required
-
-                inputProps={props.number && {
-                    pattern:"[0-9]+",
-                    inputMode:'numeric'
-                }}
-                // value={value}
-                // onChange={(event) => handleInputChange(event)}
-                placeholder={props.description}
-                fullWidth
-                multiline
-            />
-            <div className='absolute right-4'>
-                {getInputAdorment()}
-            </div>
+//                 inputProps={props.number && {
+//                     pattern:"[0-9]+",
+//                     inputMode:'numeric'
+//                 }}
+//                 // value={value}
+//                 // onChange={(event) => handleInputChange(event)}
+//                 placeholder={props.description}
+//                 fullWidth
+//                 multiline
+//             />
+//             <div className='absolute right-4'>
+//                 {getInputAdorment()}
+//             </div>
             
-        </div>
-    )
+//         </div>
+//     )
+// }
+
+let imageFiles: File[] = []
+type Products = {
+    status: String;
 }
 
-let imageFiles = []
+type StateType = {
+    products: Products;
+}
+
 const AddNewProductPage = () => {
-    const products = useSelector(state => state.products.products)
-    const productsRequestStatus = useSelector(state => state.products.status)
-    const productsRequestError = useSelector(state => state.products.error)
+    const productsRequestStatus:String = useSelector((state:StateType) => {
+        const products:Products = state.products
+        const status:String = products.status
+        return status
+    })
     const [addProductStatus, setAddProductStatus] = useState("idle")
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
     
     const [temp, setTemp] = useState(true)
     const navigate = useNavigate()
-    const thisPageElement = useRef(null)
+    const thisPageElement = useRef<HTMLElement>(null)
 
     useEffect(()=>{
         if(productsRequestStatus == "loading"){
@@ -105,7 +115,7 @@ const AddNewProductPage = () => {
         imageFiles = []
     },[])
     //INPUT FORM CONTROL 
-    const [images,setImages] = useState([])
+    const [images,setImages] = useState<String[]>([])
     const [barcode, setBarcode] = useState("")
     const [productName, setProductName] = useState("")
     const [productCategory, setProductCategory] = useState({
@@ -144,7 +154,7 @@ const AddNewProductPage = () => {
             console.log("Product name cannot be empty")
             return 
         }
-        if (productCategory === "" ){
+        if (productCategory.name === "" ){
             console.log("Category cannot be empty")
             return
         }
@@ -192,8 +202,13 @@ const AddNewProductPage = () => {
 
     //page animation
     const closePage = () => {
-        thisPageElement.current.classList.remove("add-new-product-go-up")
-        thisPageElement.current.classList.add("add-new-product-go-down")
+        if(thisPageElement.current){
+            if(thisPageElement.current){
+
+                thisPageElement.current.classList.remove("add-new-product-go-up")
+                thisPageElement.current.classList.add("add-new-product-go-down")
+            }
+        }
 
         setTemp(true)
 
@@ -210,13 +225,14 @@ const AddNewProductPage = () => {
     },[])
     
     //Images control 
-    const removeImage = (indexIn) => {
-        URL.revokeObjectURL(images[indexIn])
+    const removeImage = (indexIn:number) => {
+        URL.revokeObjectURL(images[indexIn] as string)
         imageFiles = imageFiles.slice(0,indexIn).concat(imageFiles.slice(indexIn+1,imageFiles.length))
         setImages(images.slice(0,indexIn).concat(images.slice(indexIn+1,images.length)))
     }
 
-    const ImagesElement = images?.map((url, index) => {
+    const ImagesElement = images?.map(
+        (url, index) => {
         console.log(url)
         return (  
             <SwiperSlide className='relative top-[10px]'>
@@ -225,20 +241,19 @@ const AddNewProductPage = () => {
                         className='absolute scale-[90%] right-1 top-1 bg-[#8f8a93] opacity-50 text-white rounded-full' 
                         onClick={() => removeImage(index)}
                     />
-                    <img src={url} alt="url" className='h-24 w-24 rounded-[13px] object-cover'/>
+                    <img src={url as string} alt="url" className='h-24 w-24 rounded-[13px] object-cover'/>
                 </div>
             </SwiperSlide>
-
         )
     })
 
-    const addToImagesElement = (newUrl) => {//for image display
+    const addToImagesElement = (newUrl:String) => {//for image display
         console.log("added to image element")
         console.log(newUrl)
         setImages([...images, newUrl])
     }
 
-    const addToImageFiles = (newFile) => {//for image files control
+    const addToImageFiles = (newFile: File) => {//for image files control
         console.log("added to image files")
         imageFiles.push(newFile)
     }
@@ -246,14 +261,14 @@ const AddNewProductPage = () => {
     useEffect(()=> {
         return () => {
             for (let i=0;i < images.length;i++){
-                URL.revokeObjectURL(images[i])
+                URL.revokeObjectURL(images[i] as string)
             }
         }
     },[])
 
     //Handle Camera picture taking
     const CameraElement = () => {
-        const [selectedFile, setSelectedFile] = useState()
+        const [selectedFile, setSelectedFile] = useState<File>()
 
         // create a preview as a side effect, whenever selected file is changed
         useEffect(() => {
@@ -267,7 +282,7 @@ const AddNewProductPage = () => {
 
         }, [selectedFile])
 
-        const onSelectFile = e => {
+        const onSelectFile = (e : React.ChangeEvent<HTMLInputElement>) => {
             console.log("file selected")
             console.log("file: ",e.target.files)
 
@@ -298,8 +313,8 @@ const AddNewProductPage = () => {
        {
         temp &&
         <div>
-            <Home noFetch = {true} classList="absolute z-[1]"/>
-            <Footer classList="absolute z-[1]"/>
+            <Home noFetch = {true}/>
+            <Footer/>
         </div>
        }
         {
@@ -311,7 +326,7 @@ const AddNewProductPage = () => {
                <p className='z-[5000] absolute top-0 bg-red-50'>Đang lưu dữ liệu vào database</p>
             </div>
         }
-        <div ref={thisPageElement} className='absolute top-0 right-0 w-screen h-screen add-new-product-go-up z-[1000] bg-slate-50 overflow-x-hidden'>
+        <div ref={thisPageElement as RefObject<HTMLDivElement>} className='absolute top-0 right-0 w-screen h-screen add-new-product-go-up z-[1000] bg-slate-50 overflow-x-hidden'>
 {/* Navigation */}
             <nav className='flex flex-row justify-between items-center h-10 bg-white w-full p-4'>
                 <div className='flex flex-row gap-[10px]'>
@@ -363,7 +378,6 @@ const AddNewProductPage = () => {
             <InputBase
                 className='min-h-[40px] caret-[#3e87ad] '
                 sx={{fontSize:"16px", color:"gray"}}
-                variant='standard'
                 placeholder={"Mẫu ghi chú (hoá đơn, đặt hàng)"}
                 fullWidth
                 multiline

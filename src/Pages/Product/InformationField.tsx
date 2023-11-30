@@ -1,6 +1,11 @@
 import {InputBase} from '@mui/material';
 
-const InformationField = (props) => {
+type InformationFieldProps = {
+    name: string;
+    value: string;
+}
+
+const InformationField = (props: InformationFieldProps) => {
 
     return (
         <div className='flex justify-center items-center mb-[10px]'>
@@ -9,7 +14,6 @@ const InformationField = (props) => {
                 className='border-b-gray-300 mr-[10px] min-h-[40px] border-b-solid border-b-[0.5px] caret-[#3e87ad]'
                 // sx={{fontSize:"15px"}}
                 type= 'text'
-                variant='standard'
                 required
                 value = {props.value}
                 readOnly

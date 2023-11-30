@@ -5,7 +5,7 @@ import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined
 import ShowImage from '../../Components/ShowImage/ShowImage';
 import HomeNavbar from '../HomeNavbar/HomeNavbar'
 
-import { useEffect, useState, useRef, forwardRef } from 'react';
+import { useEffect, useState, useRef, forwardRef, RefObject, createRef } from 'react';
 
 import GrayBackground from '../../Components/GrayBackground/GrayBackground';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,6 +15,9 @@ import { Link } from 'react-router-dom';
 import { fetchProducts } from '../../app/productSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import replaceVietnameseChar from '../SelectInputOptions/ReplaceVietnameseChar';
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { RootState } from '../../app/store';
+import {ThunkDispatch} from "@reduxjs/toolkit";
 // let data = [
 //   { 
 //     name: "Đèn pha Prado",
@@ -94,10 +97,14 @@ import replaceVietnameseChar from '../SelectInputOptions/ReplaceVietnameseChar';
 //     imageSource: "https://phutungotottc.com/app/webroot/upload//images/Toyota/Vios/Tui-khi-tran-xe-Vios-2018-621700D080-621800D080(1).JPG"
 //   },
 // ]
-const AddMore = (props) => {
+type HomeRrops = {
+  closeOtherElement: () => void;
+}
+
+const AddMore = (props:HomeRrops) => {
   const [isShow, setIsShow] = useState(false)
-  const plusSignButton = useRef(null)
-  const addProductElement = useRef(null)
+  const plusSignButton = useRef<HTMLInputElement>();
+  const addProductElement = useRef<HTMLElement>()
 
   const toggleShow = () => {
     props.closeOtherElement()
@@ -114,30 +121,33 @@ const AddMore = (props) => {
   //animation
   function goIn(){
     // plus sign 
-    if(plusSignButton.current.classList.contains("rotate-plus-sign-back")){
+    if(plusSignButton.current?.classList.contains("rotate-plus-sign-back")){
       plusSignButton.current.classList.remove("rotate-plus-sign-back")
     }
     
-    plusSignButton.current.classList.add("rotate-plus-sign")
+    plusSignButton.current?.classList.add("rotate-plus-sign")
 
     //thêm hàng hoá
-    if(addProductElement.current.classList.contains("go-out")){
-      addProductElement.current.classList.remove("go-out")
+    if(addProductElement.current?.classList.contains("go-out")){
+      addProductElement.current?.classList.remove("go-out")
     }
-    addProductElement.current.classList.add("go-in")
+    addProductElement.current?.classList.add("go-in")
 
   }
   //animation
   function goOut(){    
     //plus sign 
-    plusSignButton.current.classList.remove("rotate-plus-sign")
-    plusSignButton.current.classList.add("rotate-plus-sign-back")
+    plusSignButton.current?.classList.remove("rotate-plus-sign")
+    plusSignButton.current?.classList.add("rotate-plus-sign-back")
 
-    addProductElement.current.classList.remove("go-in")
-    addProductElement.current.classList.add("go-out")
+    addProductElement.current?.classList.remove("go-in")
+    addProductElement.current?.classList.add("go-out")
   }
 
-  const AddNewProductIcon = (props) => {
+  type AddNewProductIconProps = {
+    styling?: string;
+  }
+  const AddNewProductIcon = (props: AddNewProductIconProps) => {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width= "20px" height="20px" viewBox="0 0 16 16" className={props.styling} fill={"#3e87ad"}>
         <path d="M15.528 2.973a.75.75 0 0 1 .472.696v8.662a.75.75 0 0 1-.472.696l-7.25 2.9a.75.75 0 0 1-.557 0l-7.25-2.9A.75.75 0 0 1 0 12.331V3.669a.75.75 0 0 1 .471-.696L7.443.184l.01-.003.268-.108a.75.75 0 0 1 .558 0l.269.108.01.003 6.97 2.789ZM10.404 2 4.25 4.461 1.846 3.5 1 3.839v.4l6.5 2.6v7.922l.5.2.5-.2V6.84l6.5-2.6v-.4l-.846-.339L8 5.961 5.596 5l6.154-2.461L10.404 2Z"/>
@@ -156,7 +166,7 @@ const AddMore = (props) => {
         {/* <Box ref={addProductElement} isShow={isShow}/> */}
         
 
-          <div ref={addProductElement} className={'relative mr-1 mb-2 right-[-250px]'}>
+          <div ref={addProductElement as RefObject<HTMLDivElement>} className={'relative mr-1 mb-2 right-[-250px]'}>
             <Link to="/add-new-product" className='flex flex-row items-center gap-[15px]'>
               <div className='add-icon-shadow bg-white h-10 p-3 flex justify-center items-center rounded-lg'>Thêm hàng hoá</div>
               <button className='circle-shadow w-12 h-12 rounded-full bg-[white] flex justify-center items-center'>
@@ -170,7 +180,8 @@ const AddMore = (props) => {
    
       <button onClick={(state) => {toggleShow()}} 
         className= {stylingClass}>
-          <AddIcon ref={plusSignButton} className="scale-[120%] text-white"/>
+          {/* <AddIcon ref={plusSignButton} className="scale-[120%] text-white"/> */}
+          <AddIcon className="scale-[120%] text-white"/>
       </button>
     </div>
     </div>
@@ -178,14 +189,32 @@ const AddMore = (props) => {
   )
 }
 
+type HomeProps = {
+  noFetch?: boolean;
+}
+
+type ProductType = {
+  id: string;
+  barcode: number;
+  product_name: string;
+  brand_id: string;
+  category_id: string;
+  price: number;
+  import_price: number;
+  stock:number;
+  image_urls: string[];
+  storgae_location_id: string;
+  searchValue: string;
+}
+
 //Hàng hoá
-function Home(props) {
-    const dispatch = useDispatch()
+function Home(props: HomeProps) {
+    const dispatch = useDispatch<ThunkDispatch<any, any, any>>()
     const [isShow, setShow] = useState(false)
     const [imageUrl, setImageUrl] = useState("")
-    const data = useSelector(state => state.products.products)
-    const stock = useSelector(state => state.products.stock)
-    const numbProduct = useSelector(state => state.products.numbProduct)
+    const data = useSelector<RootState>(state => state.products.products) as ProductType[]
+    const stock: number = useSelector<RootState>(state => state.products.stock) as number
+    const numbProduct:number = useSelector<RootState>(state => state.products.numbProduct) as number
     const [search, setSearch] = useState("")
     
     // console.log(stock)
@@ -201,7 +230,7 @@ function Home(props) {
       return 
     },[])
 
-    const showImage = (url) => {
+    const showImage = (url: string) => {
       setImageUrl(url)
       setShow(true)
     }
@@ -210,9 +239,10 @@ function Home(props) {
       setShow(false)
     }
     
+
     const InventoryItemElements = function() {
       let arrReturn = []
-      for (let i=0;i<data.length;i++){
+      for (let i = 0;i < data.length; i++){
         let element = data[i]
         let imageURL = element.image_urls == null ? "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1200px-No-Image-Placeholder.svg.png": element.image_urls[0]
         if(element.searchValue.toLowerCase().includes(replaceVietnameseChar(search.toLowerCase()))){
@@ -223,7 +253,7 @@ function Home(props) {
           stock = {element.stock}
           code = {element.id}
           imageSource={imageURL} 
-          clickShowImage = {(url) =>{showImage(url)} }/>
+          clickShowImage = {(url: string) =>{showImage(url)} }/>
           )
         }
       }
@@ -242,7 +272,7 @@ function Home(props) {
           <nav className='nav-section2'>
             <div className="flex flex-row justify-between w-full p-2">
               <p>
-                <span style={{color:"#3e87ad"}}>{numbProduct} </span>
+                <span style={{color:"#3e87ad"}}>{numbProduct}</span>
                  hàng hoá - Tổng số lượng tồn 
                  <span style={{color:"#3e87ad"}}> {stock}</span>
 

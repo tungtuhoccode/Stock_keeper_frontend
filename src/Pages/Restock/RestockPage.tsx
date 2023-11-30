@@ -7,8 +7,13 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputBase } from "@mui/material";
+
+type RestockPageProps = {
+
+}
+
 //Sản phẩm
-function RestockPage(props) {
+function RestockPage(props: RestockPageProps) {
   const navigate = useNavigate()
   
     return (

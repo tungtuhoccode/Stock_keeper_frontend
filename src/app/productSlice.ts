@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API_URL from "../constants/routeConstants"
 import ReplaceVietnameseChar from "../Pages/SelectInputOptions/ReplaceVietnameseChar"
+import { RootState } from './store';
 
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
     console.log("fetching products")
@@ -16,7 +17,11 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
 
 })
 
-export const addProduct = createAsyncThunk('products/addProduct', async (productData) => {
+
+export const addProduct = createAsyncThunk('products/addProduct', 
+   /**  @param  {object} productData */
+async (productData) => {
+ 
     const payload = {
         method:'POST',
         headers: {'Content-Type':'application/json'},
@@ -29,8 +34,21 @@ export const addProduct = createAsyncThunk('products/addProduct', async (product
     return resultData
 
 })
+type ProductType = {
+  id: string;
+  barcode: number;
+  product_name: string;
+  brand_id: string;
+  category_id: string;
+  price: number;
+  import_price: number;
+  stock:number;
+  image_urls: string[];
+  storgae_location_id: string;
+  searchValue: string;
+}
 
-const getStock = (arr) => {
+const getStock = (arr: ProductType[]) => {
     let result = 0
     for (let i=0;i<arr.length;i++){
         console.log(typeof arr[i].stock)
@@ -39,18 +57,27 @@ const getStock = (arr) => {
     return result
 }
 
+interface ProductSliceState  {
+  stock: number;
+  numbProduct: number;
+  products: ProductType[];
+  status: string;
+  error: string | null;
+}
+
+const initialState: ProductSliceState = {
+  stock: 0,
+  numbProduct: 0,
+  products: [],
+  status: 'idle',
+  error: null
+}
 //nhóm hàng
 export const productsSlice = createSlice({
     name: 'productsSlice',
-    initialState: {
-        stock: 0,
-        numbProduct: 0,
-        products: [],
-        status: 'idle',
-        error: null
-    },
+    initialState,
     reducers:{
-        addMoreCategory: (state, action) => {
+        addMoreCategory: (state: RootState, action) => {
             console.log("new category: "+action.payload)
             state.category = [...state.category, action.payload]
         }

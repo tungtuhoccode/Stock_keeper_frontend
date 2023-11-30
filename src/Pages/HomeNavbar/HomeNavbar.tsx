@@ -7,7 +7,11 @@ import { useState } from 'react';
 import { InputBase } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function Navbar(props) {
+type HomeNavProps = {
+  search: String;
+  setSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+function Navbar(props:HomeNavProps) {
     const [isSearching, setIsSearching] = useState(false)
     return (
       <div className="navbar bg-gray-200">
@@ -37,7 +41,7 @@ function Navbar(props) {
                   className='border-b-gray-300 mx-[10px] border-b-solid border-b-[1px] caret-[#3e87ad]'
                   placeholder='Nhập tên sản phẩm để tìm kiếm'
                   value={props.search}
-                  onChange={(event) => props.setSearch(event)}
+                  onChange={(event) => props.setSearch(event as React.ChangeEvent<HTMLInputElement>)}
                 />
                 <div className="nav-icon">
                 <SearchIcon onClick={() => 

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react"
 
  const CameraPage = () => {
-  const [selectedFile, setSelectedFile] = useState()
-  const [preview, setPreview] = useState([])
+  const [selectedFile, setSelectedFile] = useState<File>()
+  const [preview, setPreview] = useState<String[]>([])
 
 
   console.log(preview)
   const allImages = preview?.map(url => {
     return (
-      <img className="w-24 h-24" src={url} alt="image"/>
+      <img className="w-24 h-24" src={url as string} alt="image"/>
     )
   })
 
@@ -19,7 +19,7 @@ import { useState, useEffect } from "react"
           return
       }
 
-      const objectUrl = URL.createObjectURL(selectedFile)
+      const objectUrl: string = URL.createObjectURL(selectedFile)
 
       setPreview([ ...preview , objectUrl])
 
@@ -27,7 +27,7 @@ import { useState, useEffect } from "react"
       return () => URL.revokeObjectURL(objectUrl)
   }, [selectedFile])
 
-  const onSelectFile = e => {
+  const onSelectFile = (e:React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files || e.target.files.length === 0) {
           setSelectedFile(undefined)
           return

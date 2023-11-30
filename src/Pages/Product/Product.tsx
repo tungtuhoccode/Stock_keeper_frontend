@@ -1,12 +1,6 @@
 import "./Product.css"
-import InventoryItem from "../../Components/InventoryItem/InventoryItem"
-import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
-
-import { Link } from "react-router-dom";
-import Home from "../Home/Home";
-import Footer from "../Footer/Footer";
 import {useEffect, useState} from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { InputBase } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,8 +10,7 @@ import 'swiper/css';
 import API_URL from "../../constants/routeConstants";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 //Sản phẩm
-function Product(props) {
-  const location = useLocation()
+function Product() {
   const navigate = useNavigate()
   const productId = useParams().id
 
@@ -31,7 +24,7 @@ function Product(props) {
   const [stock, setStock] = useState("")
   const [cost, setCost] = useState("")
 
-  const formatNumber = (number) => {
+  const formatNumber = (number: number) => {
     const strNumber = number.toString().replace(/[^0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return strNumber
   }
@@ -54,14 +47,14 @@ function Product(props) {
     setPrice(formatNumber(thisProduct.price))
   }
 
+  const closePage = () => {
+    navigate("/")
+  }
+
   useEffect(()=>{
     fetchProductData()
     window.scrollTo(0,0)
   },[])
-
-  const closePage = () => {
-    navigate("/")
-  }
 
 
   const ImagesElement = images?.map((url, index) => {
@@ -115,8 +108,8 @@ function Product(props) {
         <section className='bg-white rounded-t-xl px-2'>
             <InformationField name={"Mã vạch"} value={barcode}/>
             <InformationField name={"Tên hàng"} value={productName}/>
-            <InformationField name={"Nhóm hàng"} type="category" value={productCategory}/>
-            <InformationField name={"Thương hiệu"} type="brand" value = {brand}/>
+            <InformationField name={"Nhóm hàng"} value={productCategory}/>
+            <InformationField name={"Thương hiệu"} value = {brand}/>
             <InformationField name={"Giá bán"} value={price}/>
             <InformationField name={"Giá vốn"} value={cost}/>
             <InformationField name={"Tồn kho"} value={stock}/>
@@ -128,7 +121,6 @@ function Product(props) {
         <InputBase
             className='min-h-[40px] caret-[#3e87ad] '
             sx={{fontSize:"16px", color:"gray"}}
-            variant='standard'
             placeholder={"Mẫu ghi chú (hoá đơn, đặt hàng)"}
             fullWidth
             multiline
